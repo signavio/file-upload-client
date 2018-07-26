@@ -1,7 +1,3 @@
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.9'
-}
-
 buildscript {
     repositories {
         mavenCentral()
@@ -11,8 +7,12 @@ buildscript {
     }
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.9'
+}
+
 group 'signavio'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 apply plugin: 'java'
 apply plugin: 'application'
@@ -28,18 +28,17 @@ repositories {
 
 dependencies {
 
-//    compile group: 'org.projectlombok', name: 'lombok', version: '1.18.0'
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
-
-
     compile group: 'com.mashape.unirest', name: 'unirest-java', version: '1.4.9'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.4'
+
+    compile group: 'com.google.inject', name: 'guice', version: '4.2.0'
+    compile group: 'com.google.inject.extensions', name: 'guice-assistedinject', version: '4.2.0'
+
 
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
     compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
-
-    compile group: 'com.github.jankroken', name: 'commandline', version: '1.7.0'
 
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.13.0'
     testCompile group: 'org.assertj', name: 'assertj-core', version: '3.8.0'
@@ -57,6 +56,17 @@ jar {
     }
     manifest {
         attributes 'Main-Class': 'com.signavio.uploadclient.App'
+    }
+}
+
+distributions {
+    custom {
+        baseName = "file-upload-client"
+        contents {
+            startScripts.onlyIf { false } //exclude everything
+            from { jar }
+            from { 'src/main/dist/' }
+        }
     }
 }
 
@@ -88,4 +98,4 @@ jacocoTestReport {
 
 
 
-test{finalizedBy jacocoTestReport}
+test { finalizedBy jacocoTestReport }
