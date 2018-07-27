@@ -55,7 +55,7 @@ jobs:
         at: ./build/distributions
     - run:
         name: "Get version number"
-        command: VERSION=$(cat ./build/distributions/version.txt')
+        command: VERSION=$(cat ./build/distributions/version.txt)
     - run:
         name: "Publish Release on GitHub"
         command: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./build/distributions
