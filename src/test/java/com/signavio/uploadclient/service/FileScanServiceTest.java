@@ -119,7 +119,6 @@ class FileScanServiceTest {
 		// Arrange
 		File file1 = new File(TESTFOLDER, "file_1.test");
 		file1.createNewFile();
-		Thread.sleep(1000);
 		
 		// Act
 		fileScanService.watch();
