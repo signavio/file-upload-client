@@ -34,8 +34,31 @@ REM set PR_JVMMX=1024
 REM set PR_JVMSS=4000
 REM set PR_JVMOPTIONS=-Duser.language=DE;-Duser.region=de
 
-ECHO Install service
-prunsrv.exe //IS//%SERVICE_NAME%
 
-ECHO Start service
+if [%1]==[] goto displayUsage
+if %1 == install goto doInstall
+if %1 == remove goto doRemove
+
+:displayUsage
+echo.
+ECHO Usage: file-upload-client.bat install/remove
+GOTO end
+
+
+:doInstall
+REM Install service
+prunsrv.exe //IS//%SERVICE_NAME%
+ECHO %PR_DISPLAYNAME% has been installed
+
+REM Start service
 prunsrv.exe //ES//%SERVICE_NAME%
+ECHO %PR_DISPLAYNAME% has been started
+GOTO end
+
+:doRemove
+REM Remove service
+prunsrv.exe //DS//%SERVICE_NAME%
+ECHO %PR_DISPLAYNAME% has been removed
+GOTO end
+
+:end
