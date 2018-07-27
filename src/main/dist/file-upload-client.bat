@@ -15,7 +15,7 @@ set PR_LOGLEVEL=INFO
 
 REM Path to java installation
 set PR_JVM=%JAVA_HOME%\bin\server\jvm.dll
-set PR_CLASSPATH=file-upload-client-1.0.0.jar
+set PR_CLASSPATH=file-upload-client.jar
 
 REM Startup configuration
 set PR_STARTUP=auto

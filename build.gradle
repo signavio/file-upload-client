@@ -49,6 +49,7 @@ dependencies {
 }
 
 jar {
+    archiveName rootProject.name + '.jar'
     from {
         configurations.compile.collect {
             it.isDirectory() ? it : zipTree(it)
@@ -61,7 +62,7 @@ jar {
 
 distributions {
     custom {
-        baseName = "file-upload-client"
+        baseName = rootProject.name
         contents {
             startScripts.onlyIf { false } //exclude everything
             from { jar }
