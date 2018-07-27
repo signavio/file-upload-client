@@ -15,8 +15,8 @@ public class RetryStrategyImpl implements RetryStrategy {
 	
 	private final List<Pair<Long, String>> retryStrategies = List.of(
 			Pair.of(10_000L, "10 seconds"),
-			Pair.of(18_000_000L, "5 minutes"),
-			Pair.of(108_000_000L, "30 minutes"));
+			Pair.of(300_000L, "5 minutes"),
+			Pair.of(1_800_000L, "30 minutes"));
 	
 	
 	public UploadResult retry(File file, Integer count, Function<File, UploadResult> function) {
