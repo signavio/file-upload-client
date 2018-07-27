@@ -43,6 +43,8 @@ jobs:
     - run: gradle properties -q | grep "version:" | awk '{print $2}' > workspace/version.txt
     - persist_to_workspace:
         root: workspace
+        paths:
+          - ./
 
 
   publish-github-release:
