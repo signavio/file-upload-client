@@ -37,8 +37,13 @@ jobs:
         name: Build app
         command: gradle jar
     - run:
-        name: package app
+        name: Package app
         command: gradle customDistZip
+    - run: mkdir -p workspace
+    - run: gradle properties -q | grep "version:" | awk '{print $2}' > workspace/version.txt
+    - persist_to_workspace:
+        root: workspace
+
 
   publish-github-release:
     docker:
@@ -48,7 +53,7 @@ jobs:
         at: ./build/distributions
     - run:
         name: "Get version number"
-        command: VERSION=$(gradle properties -q | grep "version:" | awk '{print $2}')
+        command: VERSION=$(cat ./build/distributions/version.txt')
     - run:
         name: "Publish Release on GitHub"
         command: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./build/distributions
