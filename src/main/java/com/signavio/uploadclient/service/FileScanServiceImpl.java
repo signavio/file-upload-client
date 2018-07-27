@@ -25,8 +25,8 @@ public class FileScanServiceImpl implements FileScanService {
 	private final FileUploadConfiguration config;
 	private final String pattern;
 	private final FileUploadService fileUploadService;
-	private final WatchKey watchKey;
 	private final Path watchedDirectory;
+	private WatchService watcher;
 	
 	
 	@Inject
@@ -35,11 +35,10 @@ public class FileScanServiceImpl implements FileScanService {
 		this.pattern = config.getPattern();
 		this.fileUploadService = fileUploadService;
 		
-		WatchService watcher;
 		try {
 			watcher = FileSystems.getDefault().newWatchService();
 			watchedDirectory = FileSystems.getDefault().getPath(config.getFolder());
-			this.watchKey = watchedDirectory.register(watcher, ENTRY_CREATE);
+			watchedDirectory.register(watcher, ENTRY_CREATE);
 		} catch (IOException e) {
 			String msg = "failed to start the watch service.";
 			log.error(msg);
@@ -76,6 +75,13 @@ public class FileScanServiceImpl implements FileScanService {
 	@Override
 	public void watch() {
 		
+		WatchKey watchKey;
+		try {
+			watchKey = watcher.take();
+		} catch (InterruptedException e) {
+			log.info("interrupted while waiting: ", e);
+			return;
+		}
 		for (WatchEvent<?> event : watchKey.pollEvents()) {
 			WatchEvent.Kind<?> kind = event.kind();
 			
