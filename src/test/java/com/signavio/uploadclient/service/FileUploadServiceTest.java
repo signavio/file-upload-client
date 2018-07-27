@@ -67,7 +67,7 @@ class FileUploadServiceTest {
 	void testSuccess() throws IOException, UnirestException {
 		
 		// Arrange
-		HttpResponse<JsonNode> httpResponse = mock(HttpResponse.class);
+		HttpResponse<String> httpResponse = mock(HttpResponse.class);
 		when(httpResponse.getStatus()).thenReturn(204);
 		
 		when(communicationService.executeUploadRequest(any())).thenReturn(httpResponse);
@@ -87,9 +87,9 @@ class FileUploadServiceTest {
 	void testFailed() throws IOException, UnirestException {
 		
 		// Arrange
-		HttpResponse<JsonNode> httpResponse = mock(HttpResponse.class);
+		HttpResponse<String> httpResponse = mock(HttpResponse.class);
 		when(httpResponse.getStatus()).thenReturn(401);
-		when(httpResponse.getBody()).thenReturn(new JsonNode("{}"));
+		when(httpResponse.getBody()).thenReturn("{}");
 		
 		when(communicationService.executeUploadRequest(any())).thenReturn(httpResponse);
 		
@@ -108,9 +108,9 @@ class FileUploadServiceTest {
 	void testRetry() throws IOException, UnirestException {
 		
 		// Arrange
-		HttpResponse<JsonNode> httpResponse = mock(HttpResponse.class);
+		HttpResponse<String> httpResponse = mock(HttpResponse.class);
 		when(httpResponse.getStatus()).thenReturn(500, 500, 204);
-		when(httpResponse.getBody()).thenReturn(new JsonNode("{}"));
+		when(httpResponse.getBody()).thenReturn("<>");
 		
 		when(communicationService.executeUploadRequest(any())).thenReturn(httpResponse);
 		

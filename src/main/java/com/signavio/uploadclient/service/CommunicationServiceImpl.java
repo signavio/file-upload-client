@@ -28,11 +28,11 @@ public class CommunicationServiceImpl implements CommunicationService {
 	
 	
 	@Override
-	public HttpResponse<JsonNode> executeUploadRequest(File file) throws UnirestException, FileNotFoundException {
+	public HttpResponse<String> executeUploadRequest(File file) throws UnirestException, FileNotFoundException {
 		return Unirest.post(endpoint)
 				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 				.field("file", new FileInputStream(file), file.getAbsolutePath())
-				.asJson();
+				.asString();
 	}
 	
 }

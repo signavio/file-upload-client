@@ -65,7 +65,7 @@ class FileUploadServiceImpl implements FileUploadService {
 		
 		try {
 			log.info("start uploading file " + file.getAbsolutePath());
-			HttpResponse<JsonNode> response = communicationService.executeUploadRequest(file);
+			HttpResponse<String> response = communicationService.executeUploadRequest(file);
 			
 			if (response.getStatus() == 204) {
 				log.info("file " + file.getAbsolutePath() + " uploaded successfully.");
@@ -89,9 +89,9 @@ class FileUploadServiceImpl implements FileUploadService {
 	}
 	
 	
-	private void logRequestFailure(File file, HttpResponse<JsonNode> response) {
+	private void logRequestFailure(File file, HttpResponse<String> response) {
 		log.info("upload of " + file.getAbsolutePath() + " failed! Got response " + response.getStatus()
-				+ " with message '" + response.getBody().toString() + "'");
+				+ " with message '" + response.getBody() + "'");
 	}
 	
 	

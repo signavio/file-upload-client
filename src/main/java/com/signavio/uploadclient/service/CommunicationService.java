@@ -11,5 +11,5 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 @ImplementedBy(CommunicationServiceImpl.class)
 public interface CommunicationService {
 	
-	HttpResponse<JsonNode> executeUploadRequest(File file) throws UnirestException, FileNotFoundException;
+	HttpResponse<String> executeUploadRequest(File file) throws UnirestException, FileNotFoundException;
 }

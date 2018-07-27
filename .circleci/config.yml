@@ -47,10 +47,11 @@ jobs:
     - attach_workspace:
         at: ./build/distributions
     - run:
+        name: "Get version number"
+        command: VERSION=$(gradle properties -q | grep "version:" | awk '{print $2}')
+    - run:
         name: "Publish Release on GitHub"
-        command: |
-          VERSION=$(gradle properties -q | grep "version:" | awk '{print $2}')
-          ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./build/distributions
+        command: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./build/distributions
 
 
 workflows:
