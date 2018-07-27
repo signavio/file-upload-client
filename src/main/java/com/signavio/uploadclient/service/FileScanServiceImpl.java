@@ -13,14 +13,14 @@ import java.nio.file.WatchService;
 import com.google.inject.Inject;
 import com.signavio.uploadclient.FileUploadConfiguration;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
+import static org.slf4j.LoggerFactory.getLogger;
 
 public class FileScanServiceImpl implements FileScanService {
 	
-	private static final Logger log = LoggerFactory.getLogger(FileScanServiceImpl.class);
+	private static final Logger log = getLogger(FileScanServiceImpl.class);
 	
 	private final FileUploadConfiguration config;
 	private final String pattern;
@@ -30,7 +30,7 @@ public class FileScanServiceImpl implements FileScanService {
 	
 	
 	@Inject
-	private FileScanServiceImpl(FileUploadConfiguration config, FileUploadService fileUploadService) {
+	FileScanServiceImpl(FileUploadConfiguration config, FileUploadService fileUploadService) {
 		this.config = config;
 		this.pattern = config.getPattern();
 		this.fileUploadService = fileUploadService;
@@ -76,51 +76,47 @@ public class FileScanServiceImpl implements FileScanService {
 	@Override
 	public void watch() {
 		
-		log.info("watching directory " + watchedDirectory.toString());
+		for (WatchEvent<?> event : watchKey.pollEvents()) {
+			WatchEvent.Kind<?> kind = event.kind();
+			
+			// This key is registered only
+			// for ENTRY_CREATE events,
+			// but an OVERFLOW event can
+			// occur regardless if events
+			// are lost or discarded.
+			if (kind == OVERFLOW) {
+				initialScan();
+				continue;
+			}
+			
+			WatchEvent<Path> ev = (WatchEvent<Path>) event;
+			Path path = ev.context();
+			
+			String filename = watchedDirectory.toString() + "/" + path.toString();
+			log.debug("checking file " + filename);
+			log.debug("matches " + FileSystems.getDefault().getPathMatcher("glob:" + pattern).matches(path));
+			log.debug("is file " + new File(filename).isFile());
+			log.debug(".uploaded exists  " + new File(filename + ".uploaded").exists());
+			log.debug(".failed exists  " + new File(filename + ".failed").exists());
+			if (FileSystems.getDefault().getPathMatcher("glob:" + pattern).matches(path)
+					&& new File(filename).isFile()
+					&& !new File(filename + ".uploaded").exists()
+					&& !new File(filename + ".failed").exists()) {
+				
+				File file = new File(filename);
+				
+				fileUploadService.upload(file);
+			}
+		}
 		
-		while (true) {
-			for (WatchEvent<?> event : watchKey.pollEvents()) {
-				WatchEvent.Kind<?> kind = event.kind();
-				
-				// This key is registered only
-				// for ENTRY_CREATE events,
-				// but an OVERFLOW event can
-				// occur regardless if events
-				// are lost or discarded.
-				if (kind == OVERFLOW) {
-					initialScan();
-					continue;
-				}
-				
-				WatchEvent<Path> ev = (WatchEvent<Path>) event;
-				Path path = ev.context();
-				
-				String filename = watchedDirectory.toString() + "/" + path.toString();
-				log.debug("checking file " + filename);
-				log.debug("matches " + FileSystems.getDefault().getPathMatcher("glob:" + pattern).matches(path));
-				log.debug("is file " + new File(filename).isFile());
-				log.debug(".uploaded exists  " + new File(filename + ".uploaded").exists());
-				log.debug(".failed exists  " + new File(filename + ".failed").exists());
-				if (FileSystems.getDefault().getPathMatcher("glob:" + pattern).matches(path)
-						&& new File(filename).isFile()
-						&& !new File(filename + ".uploaded").exists()
-						&& !new File(filename + ".failed").exists()) {
-					
-					File file = new File(filename);
-					
-					fileUploadService.upload(file);
-				}
-			}
-			
-			
-			// Reset the key -- this step is critical if you want to
-			// receive further watch events.  If the key is no longer valid,
-			// the directory is inaccessible so exit the loop.
-			boolean valid = watchKey.reset();
-			if (!valid) {
-				log.error("unable to continue watching folder " + config.getFolder());
-				System.exit(1);
-			}
+		
+		// Reset the key -- this step is critical if you want to
+		// receive further watch events.  If the key is no longer valid,
+		// the directory is inaccessible so exit the loop.
+		boolean valid = watchKey.reset();
+		if (!valid) {
+			log.error("unable to continue watching folder " + config.getFolder());
+			System.exit(1);
 		}
 	}
 	

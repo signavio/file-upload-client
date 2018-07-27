@@ -32,7 +32,10 @@ public class App {
 		FileScanService fileScanService = injector.getInstance(FileScanService.class);
 		
 		fileScanService.initialScan();
-		fileScanService.watch();
+		log.info("watching directory ");
+		while (true) {
+			fileScanService.watch();
+		}
 	}
 	
 	
