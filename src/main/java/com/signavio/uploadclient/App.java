@@ -15,17 +15,6 @@ public class App {
 	
 	public static void main(String[] args) {
 		
-		if ("start".equals(args[0])) {
-			start(args);
-		} else if ("stop".equals(args[0])) {
-			stop(args);
-		}
-		
-	}
-	
-	
-	public static void start(String[] args) {
-		
 		log.info("Signavio File Upload Service started...");
 		
 		Injector injector = Guice.createInjector(new AppModule());
@@ -36,11 +25,6 @@ public class App {
 		while (true) {
 			fileScanService.watch();
 		}
-	}
-	
-	
-	public static void stop(String[] args) {
-		log.info("Service is being shut down...");
-		System.exit(0);
+		
 	}
 }

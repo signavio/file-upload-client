@@ -21,18 +21,8 @@ REM Startup configuration
 set PR_STARTUP=auto
 set PR_STARTMODE=jvm
 set PR_STARTCLASS=com.signavio.uploadclient.App
-set PR_STARTMETHOD=start
+set PR_STARTMETHOD=main
 
-REM Shutdown configuration
-set PR_STOPMODE=jvm
-set PR_STOPCLASS=com.signavio.uploadclient.App
-set PR_STOPMETHOD=stop
-
-REM JVM configuration
-REM set PR_JVMMS=256
-REM set PR_JVMMX=1024
-REM set PR_JVMSS=4000
-REM set PR_JVMOPTIONS=-Duser.language=DE;-Duser.region=de
 
 
 if [%1]==[] goto displayUsage

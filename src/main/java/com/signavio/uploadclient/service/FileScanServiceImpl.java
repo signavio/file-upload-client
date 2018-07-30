@@ -100,10 +100,6 @@ public class FileScanServiceImpl implements FileScanService {
 			
 			String filename = watchedDirectory.toString() + "/" + path.toString();
 			log.debug("checking file " + filename);
-			log.debug("matches " + FileSystems.getDefault().getPathMatcher("glob:" + pattern).matches(path));
-			log.debug("is file " + new File(filename).isFile());
-			log.debug(".uploaded exists  " + new File(filename + ".uploaded").exists());
-			log.debug(".failed exists  " + new File(filename + ".failed").exists());
 			if (FileSystems.getDefault().getPathMatcher("glob:" + pattern).matches(path)
 					&& new File(filename).isFile()
 					&& !new File(filename + ".uploaded").exists()
