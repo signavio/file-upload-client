@@ -1,6 +1,7 @@
 package com.signavio.uploadclient.service;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -13,7 +14,7 @@ public class RetryStrategyImpl implements RetryStrategy {
 	
 	private static final Logger log = getLogger(RetryStrategyImpl.class);
 	
-	private final List<Pair<Long, String>> retryStrategies = List.of(
+	private final List<Pair<Long, String>> retryStrategies = Arrays.asList(
 			Pair.of(10_000L, "10 seconds"),
 			Pair.of(300_000L, "5 minutes"),
 			Pair.of(1_800_000L, "30 minutes"));
