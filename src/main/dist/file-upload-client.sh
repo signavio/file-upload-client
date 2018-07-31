@@ -1,25 +1,27 @@
 #!/bin/sh
 SERVICE_NAME=FileUploadService
-PATH_TO_JAR = "${PWD}/file-upload-client.jar"
+PATH_TO_JAR="${PWD}/file-upload-client.jar"
 case $1 in
     install)
         echo "installing $SERVICE_NAME ..."
-        sudo cp ./signavio-file-upload-client.sh /etc/init.d/signavio-file-upload-client.sh
-        sudo chmod +x /etc/init.d/signavio-file-upload-client.sh
-        sudo ln -s /etc/init.d/signavio-file-upload-client.sh /etc/rc0.d/K60signavio-file-upload-client
-        sudo ln -s /etc/init.d/signavio-file-upload-client.sh /etc/rc3.d/S60signavio-file-upload-client
-        sudo ln -s /etc/init.d/signavio-file-upload-client.sh /etc/rc6.d/K60signavio-file-upload-client
-        sudo $PATH_TO_JAR > /etc/opt/signavio-file-upload-jar-location.txt
-        sudo /etc/init.d/signavio-file-upload-client.sh start
-        echo "$SERVICE_NAME started"
+        sudo cp ./signavio-file-upload-client.sh /etc/init.d/$SERVICE_NAME
+        sudo chmod +x /etc/init.d/$SERVICE_NAME
+        sudo chmod +x ./file-upload-client.jar
+        sudo ln -s /etc/init.d/$SERVICE_NAME /etc/rc0.d/K60$SERVICE_NAME
+        sudo ln -s /etc/init.d/$SERVICE_NAME /etc/rc3.d/S60$SERVICE_NAME
+        sudo ln -s /etc/init.d/$SERVICE_NAME /etc/rc6.d/K60$SERVICE_NAME
+        sudo touch /etc/opt/signavio-file-upload-jar-location.txt
+        sudo chmod +x /etc/opt/signavio-file-upload-jar-location.txt
+        sudo echo "$PATH_TO_JAR" > "/etc/opt/signavio-file-upload-jar-location.txt"
+        sudo service $SERVICE_NAME start
     ;;
     remove)
-        sudo /etc/init.d/signavio-file-upload-client.sh stop
+        sudo /etc/init.d/$SERVICE_NAME stop
         sudo rm -f /etc/opt/signavio-file-upload-jar-location.txt
-        sudo rm -f /etc/init.d/signavio-file-upload-client.sh
-        sudo rm -f /etc/rc0.d/K60signavio-file-upload-client
-        sudo rm -f /etc/rc3.d/S60signavio-file-upload-client
-        sudo rm -f /etc/rc6.d/K60signavio-file-upload-client
+        sudo rm -f /etc/init.d/$SERVICE_NAME
+        sudo rm -f /etc/rc0.d/K60$SERVICE_NAME
+        sudo rm -f /etc/rc3.d/S60$SERVICE_NAME
+        sudo rm -f /etc/rc6.d/K60$SERVICE_NAME
         echo "$SERVICE_NAME has been removed"
     ;;
     *)
