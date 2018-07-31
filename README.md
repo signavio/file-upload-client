@@ -16,7 +16,7 @@ The Signavio file upload client is a small Java application that runs in the SAP
 * inspect the log file _./logs/logFile.html_ that the service is running
 * execute `./file-upload-client.bat install` to uninstall the service
 
-#Usage on Linux
+# Usage on Linux
 * Download latest release from <https://github.com/signavio/file-upload-client/releases>
 * unzip downloaded file, e.g. `unzip file-upload-client-1.0.0.zip`
 * navigate to folder, eg. `cd file-upload-client-1.0.0/`
