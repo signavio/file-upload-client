@@ -59,7 +59,7 @@ jobs:
         command: VERSION=$(cat ./workspace/version.txt)
     - run:
         name: "Publish Release on GitHub"
-        command: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete "$VERSION" ./build/distributions
+        command: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete $(<./workspace/version.txt) ./build/distributions
 
 
 workflows:
