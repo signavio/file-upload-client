@@ -9,12 +9,15 @@ import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.google.inject.Inject;
 import com.signavio.uploadclient.FileUploadConfiguration;
 import org.slf4j.Logger;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -27,6 +30,7 @@ public class FileScanServiceImpl implements FileScanService {
 	private final FileUploadService fileUploadService;
 	private final Path watchedDirectory;
 	private WatchService watcher;
+	private final Set<Path> createdFiles = new HashSet<>();
 	
 	
 	@Inject
@@ -38,7 +42,7 @@ public class FileScanServiceImpl implements FileScanService {
 		try {
 			watcher = FileSystems.getDefault().newWatchService();
 			watchedDirectory = FileSystems.getDefault().getPath(config.getFolder());
-			watchedDirectory.register(watcher, ENTRY_CREATE);
+			watchedDirectory.register(watcher, ENTRY_CREATE, ENTRY_MODIFY);
 		} catch (IOException e) {
 			String msg = "failed to start the watch service.";
 			log.error(msg);
@@ -85,12 +89,14 @@ public class FileScanServiceImpl implements FileScanService {
 		for (WatchEvent<?> event : watchKey.pollEvents()) {
 			WatchEvent.Kind<?> kind = event.kind();
 			
+			log.debug("event " + event.context() + " of kind " + kind.toString());
+			
 			// This key is registered only
 			// for ENTRY_CREATE events,
 			// but an OVERFLOW event can
 			// occur regardless if events
 			// are lost or discarded.
-			if (kind == OVERFLOW) {
+			if (kind.equals(OVERFLOW)) {
 				initialScan();
 				continue;
 			}
@@ -105,9 +111,16 @@ public class FileScanServiceImpl implements FileScanService {
 					&& !new File(filename + ".uploaded").exists()
 					&& !new File(filename + ".failed").exists()) {
 				
-				File file = new File(filename);
+				if (kind.equals(ENTRY_CREATE)) {
+					createdFiles.add(path);
+					continue;
+				} else if (kind.equals(ENTRY_MODIFY) && createdFiles.contains(path)) {
+					
+					File file = new File(filename);
+					fileUploadService.upload(file);
+					createdFiles.remove(path);
+				}
 				
-				fileUploadService.upload(file);
 			}
 		}
 		

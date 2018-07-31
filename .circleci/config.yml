@@ -46,6 +46,7 @@ jobs:
         paths:
           - build/distributions
           - workspace/
+    - run: cat ./workspace/version.txt
 
 
   publish-github-release:
@@ -54,9 +55,13 @@ jobs:
     steps:
     - attach_workspace:
         at: .
+    - run: ls
+    - run: ls ./workspace
+    - run: cat ./workspace/version.txt
     - run:
         name: "Get version number"
         command: VERSION=$(cat ./workspace/version.txt)
+    - run: echo $VERSION
     - run:
         name: "Publish Release on GitHub"
         command: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete $VERSION ./build/distributions

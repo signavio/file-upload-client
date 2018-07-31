@@ -31,7 +31,7 @@ public class CommunicationServiceImpl implements CommunicationService {
 	public HttpResponse<String> executeUploadRequest(File file) throws UnirestException, FileNotFoundException {
 		return Unirest.post(endpoint)
 				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-				.field("file", new FileInputStream(file), file.getAbsolutePath())
+				.field("file", new FileInputStream(file), file.getName())
 				.asString();
 	}
 	

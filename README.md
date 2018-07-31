@@ -8,8 +8,6 @@ The Signavio file upload client is a small Java application that runs in the SAP
     - $JAVA_HOME set
     - $JAVA_HOME/bin added to $PATH environment variable
 
-https://tools.hana.ondemand.com/#cloud
-
 # Usage on Windows
 * Download latest release from <https://github.com/signavio/file-upload-client/releases>
 * extract the downloaded zip file
