@@ -1,6 +1,15 @@
 # file-upload-client
 The Signavio file upload client is a small Java application that runs in the SAP JVM. It takes as configuration parameters the access info to Signavio landscape and the directory where SNP stores the XES file. It checks for new XES files and takes care of the upload, as well as errors that might occur.
 
+# Requirements
+* SNP extension for the SAP solution with XES export
+* Operation system: Windows Server 2008/2012/2016 or Suse Linux Enterprise/Red Hat Enterprise Linux (or similar Linux distribution)
+* SAP JVM 8.1 installed (https://tools.hana.ondemand.com/#cloud) 
+    - $JAVA_HOME set
+    - $JAVA_HOME/bin added to $PATH environment variable
+
+https://tools.hana.ondemand.com/#cloud
+
 # Usage on Windows
 * Download latest release from <https://github.com/signavio/file-upload-client/releases>
 * extract the downloaded zip file
