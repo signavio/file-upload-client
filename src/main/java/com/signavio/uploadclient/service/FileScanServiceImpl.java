@@ -89,7 +89,7 @@ public class FileScanServiceImpl implements FileScanService {
 		for (WatchEvent<?> event : watchKey.pollEvents()) {
 			WatchEvent.Kind<?> kind = event.kind();
 			
-			log.debug("event " + event.context() + " of kind " + kind.toString());
+			log.info("event " + event.context() + " of kind " + kind.toString());
 			
 			// This key is registered only
 			// for ENTRY_CREATE events,

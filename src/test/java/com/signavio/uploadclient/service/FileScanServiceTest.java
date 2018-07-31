@@ -2,12 +2,14 @@ package com.signavio.uploadclient.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
 import com.google.inject.testing.fieldbinder.Bind;
 import com.signavio.uploadclient.FileUploadConfiguration;
 import com.signavio.uploadclient.junit5.TestUnitExtension;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -118,7 +120,7 @@ class FileScanServiceTest {
 		
 		// Arrange
 		File file1 = new File(TESTFOLDER, "file_1.test");
-		file1.createNewFile();
+		FileUtils.writeStringToFile(file1, "test string", Charset.defaultCharset());
 		
 		// Act
 		fileScanService.watch();

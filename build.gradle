@@ -29,8 +29,9 @@ repositories {
 dependencies {
 
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
-    compile group: 'com.mashape.unirest', name: 'unirest-java', version: '1.4.9'
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.4'
+    compile group: 'com.mashape.unirest', name: 'unirest-java', version: '1.4.9'
 
     compile group: 'com.google.inject', name: 'guice', version: '4.2.0'
 
