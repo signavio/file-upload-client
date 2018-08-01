@@ -9,15 +9,12 @@ import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.google.inject.Inject;
 import com.signavio.uploadclient.FileUploadConfiguration;
 import org.slf4j.Logger;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -30,7 +27,6 @@ public class FileScanServiceImpl implements FileScanService {
 	private final FileUploadService fileUploadService;
 	private final Path watchedDirectory;
 	private WatchService watcher;
-	private final Set<Path> createdFiles = new HashSet<>();
 	
 	
 	@Inject
@@ -42,7 +38,7 @@ public class FileScanServiceImpl implements FileScanService {
 		try {
 			watcher = FileSystems.getDefault().newWatchService();
 			watchedDirectory = FileSystems.getDefault().getPath(config.getFolder());
-			watchedDirectory.register(watcher, ENTRY_CREATE, ENTRY_MODIFY);
+			watchedDirectory.register(watcher, ENTRY_CREATE);
 		} catch (IOException e) {
 			String msg = "failed to start the watch service.";
 			log.error(msg);
@@ -89,7 +85,7 @@ public class FileScanServiceImpl implements FileScanService {
 		for (WatchEvent<?> event : watchKey.pollEvents()) {
 			WatchEvent.Kind<?> kind = event.kind();
 			
-			log.info("event " + event.context() + " of kind " + kind.toString());
+			log.debug("event " + event.context() + " of kind " + kind.toString());
 			
 			// This key is registered only
 			// for ENTRY_CREATE events,
@@ -106,21 +102,17 @@ public class FileScanServiceImpl implements FileScanService {
 			
 			String filename = watchedDirectory.toString() + "/" + path.toString();
 			log.debug("checking file " + filename);
-			if (FileSystems.getDefault().getPathMatcher("glob:" + pattern).matches(path)
-					&& new File(filename).isFile()
+			if (new File(filename).isFile()
 					&& !new File(filename + ".uploaded").exists()
-					&& !new File(filename + ".failed").exists()) {
-				
-				if (kind.equals(ENTRY_CREATE)) {
-					createdFiles.add(path);
-					continue;
-				} else if (kind.equals(ENTRY_MODIFY) && createdFiles.contains(path)) {
-					
-					File file = new File(filename);
-					fileUploadService.upload(file);
-					createdFiles.remove(path);
+					&& !new File(filename + ".failed").exists()
+					&& FileSystems.getDefault().getPathMatcher("glob:" + pattern).matches(path)
+			) {
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					log.warn("Sleep interrupted ", e);
 				}
-				
+				fileUploadService.upload(new File(filename));
 			}
 		}
 		

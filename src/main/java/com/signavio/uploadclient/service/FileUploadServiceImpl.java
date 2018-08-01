@@ -3,10 +3,10 @@ package com.signavio.uploadclient.service;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 
 import com.google.inject.Inject;
 import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.slf4j.Logger;
 
@@ -63,6 +63,22 @@ class FileUploadServiceImpl implements FileUploadService {
 	
 	private UploadResult doUpload(File file) {
 		
+		RandomAccessFile randomAccessFile = null;
+		try {
+			randomAccessFile = new RandomAccessFile(file, "rw");
+		} catch (FileNotFoundException e) {
+			log.info("File " + file.getAbsolutePath() + " is not completed yet.", e);
+			return UploadResult.RETRY;
+		} finally {
+			if (randomAccessFile != null){
+				try {
+					randomAccessFile.close();
+				} catch (IOException e){
+					log.warn("Exception during closing file " + file.getName());
+				}
+			}
+		}
+		
 		try {
 			log.info("start uploading file " + file.getAbsolutePath());
 			HttpResponse<String> response = communicationService.executeUploadRequest(file);
@@ -85,7 +101,6 @@ class FileUploadServiceImpl implements FileUploadService {
 			log.error("upload of file " + file.getAbsolutePath() + " failed with an exception: ", e);
 			return UploadResult.FAILED;
 		}
-		
 	}
 	
 	

@@ -4,7 +4,7 @@ PATH_TO_JAR="${PWD}/file-upload-client.jar"
 case $1 in
     install)
         echo "installing $SERVICE_NAME ..."
-        sudo cp ./signavio-file-upload-client.sh /etc/init.d/$SERVICE_NAME
+        sudo cp ./file-upload-daemon.sh /etc/init.d/$SERVICE_NAME
         sudo chmod +x /etc/init.d/$SERVICE_NAME
         sudo chmod +x ./file-upload-client.jar
         sudo ln -s /etc/init.d/$SERVICE_NAME /etc/rc0.d/K60$SERVICE_NAME

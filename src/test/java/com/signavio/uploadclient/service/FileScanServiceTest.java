@@ -116,7 +116,7 @@ class FileScanServiceTest {
 	}
 	
 	@Test
-	void testWatching() throws IOException, InterruptedException {
+	void testWatching() throws IOException {
 		
 		// Arrange
 		File file1 = new File(TESTFOLDER, "file_1.test");
